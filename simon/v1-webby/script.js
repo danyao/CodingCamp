@@ -14,10 +14,6 @@ let playbackTimers = [];
 let audioContext = null;
 let isMuted = false;
 
-function sequenceLengthForLevel(currentLevel) {
-  return 4 + (currentLevel - 1);
-}
-
 function durationForLevel(currentLevel) {
   const duration = 1000 - (currentLevel - 1) * 80;
   return Math.max(300, duration);
@@ -115,10 +111,7 @@ function playSequence() {
 }
 
 function startRound() {
-  sequence = Array.from({ length: sequenceLengthForLevel(level) }, () => {
-    const pick = Math.floor(Math.random() * colors.length);
-    return colors[pick];
-  });
+  sequence = SimonLogic.generateSequence(level, colors);
   playSequence();
 }
 
@@ -128,12 +121,13 @@ function handlePadPress(color) {
   highlightPad(color, 300);
   playTone(colorTone(color), 180);
 
-  if (color !== sequence[userIndex]) {
+  const result = SimonLogic.checkUserInput(sequence, userIndex, color);
+  if (!result.correct) {
     acceptingInput = false;
+    userIndex = result.nextIndex;
     playErrorTone();
     setMessage(`Incorrect. Press start to retry level ${level}.`);
     startButton.disabled = false;
-    userIndex = 0;
     setTimeout(() => {
       if (!acceptingInput) {
         setMessage('Try again.');
@@ -143,8 +137,8 @@ function handlePadPress(color) {
     return;
   }
 
-  userIndex += 1;
-  if (userIndex === sequence.length) {
+  userIndex = result.nextIndex;
+  if (result.isComplete) {
     acceptingInput = false;
     level += 1;
     levelLabel.textContent = level;
