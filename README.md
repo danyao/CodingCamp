@@ -10,6 +10,8 @@ Use the release script to build static demo outputs:
 node scripts/release.js simon-v1-webby
 ```
 
+Outputs are written under `docs/` for GitHub Pages.
+
 To preview actions without writing files:
 
 ```bash

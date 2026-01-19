@@ -4,7 +4,7 @@ const path = require('path');
 const targets = {
   'simon-v1-webby': {
     sourceRoot: 'simon/v1-webby',
-    outputRoot: 'demo/simon-v1-webby',
+    outputRoot: 'docs/simon-v1-webby',
     files: [
       { src: 'src/index.html', dest: 'index.html' },
       { src: 'src/styles.css', dest: 'styles.css' },
