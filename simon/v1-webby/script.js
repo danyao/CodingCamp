@@ -109,7 +109,6 @@ function playSequence() {
   const endTimer = setTimeout(() => {
     setMessage('Your turn.');
     acceptingInput = true;
-    startButton.disabled = false;
     playbackTimers = [];
   }, totalTime);
   playbackTimers.push(endTimer);
@@ -133,6 +132,7 @@ function handlePadPress(color) {
     acceptingInput = false;
     playErrorTone();
     setMessage(`Incorrect. Press start to retry level ${level}.`);
+    startButton.disabled = false;
     return;
   }
 
@@ -142,6 +142,7 @@ function handlePadPress(color) {
     level += 1;
     levelLabel.textContent = level;
     setMessage('Correct! Press start for the next level.');
+    startButton.disabled = false;
   }
 }
 
