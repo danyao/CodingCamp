@@ -133,6 +133,13 @@ function handlePadPress(color) {
     playErrorTone();
     setMessage(`Incorrect. Press start to retry level ${level}.`);
     startButton.disabled = false;
+    userIndex = 0;
+    setTimeout(() => {
+      if (!acceptingInput) {
+        setMessage('Try again.');
+        acceptingInput = true;
+      }
+    }, 700);
     return;
   }
 
