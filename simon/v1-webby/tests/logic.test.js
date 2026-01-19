@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { generateSequence, checkUserInput, sequenceLengthForLevel } = require('../logic');
+const { generateSequence, checkUserInput, sequenceLengthForLevel } = require('../src/logic');
 
 function makeRng(values) {
   let index = 0;
