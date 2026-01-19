@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Simon</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="header">
+        <div>
+          <h1>Simon</h1>
+          <p class="subtitle">Repeat the sequence to advance.</p>
+        </div>
+        <div class="status">
+          <div class="status-item">Level <span id="level">1</span></div>
+          <div class="status-item" id="message">Press start to play.</div>
+        </div>
+      </header>
+
+      <section class="board" aria-label="Simon board">
+        <button class="pad green" data-color="green" aria-label="Green"></button>
+        <button class="pad red" data-color="red" aria-label="Red"></button>
+        <button class="pad yellow" data-color="yellow" aria-label="Yellow"></button>
+        <button class="pad blue" data-color="blue" aria-label="Blue"></button>
+      </section>
+
+      <footer class="controls">
+        <button id="start" class="start">Start</button>
+        <button id="mute" class="mute" aria-pressed="false" aria-label="Mute audio">
+          <span class="icon icon-unmuted" aria-hidden="true">
+            <img src="../icons/volume-on.svg" alt="" />
+          </span>
+          <span class="icon icon-muted" aria-hidden="true">
+            <img src="../icons/volume-off.svg" alt="" />
+          </span>
+        </button>
+      </footer>
+    </main>
+
+    <script src="logic.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
