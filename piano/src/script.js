@@ -54,27 +54,37 @@ let audioCtx;
 
 function getAudioContext() {
   if (!audioCtx) {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    try {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    } catch (error) {
+      console.error("Failed to create AudioContext:", error);
+      return null;
+    }
   }
   return audioCtx;
 }
 
 function playTone(freq) {
   const ctx = getAudioContext();
-  const now = ctx.currentTime;
-  const osc = ctx.createOscillator();
-  const gain = ctx.createGain();
+  if (!ctx) return;
+  try {
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
 
-  osc.type = "sine";
-  osc.frequency.value = freq;
-  gain.gain.setValueAtTime(0, now);
-  gain.gain.linearRampToValueAtTime(0.7, now + 0.02);
-  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+    osc.type = "sine";
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(0.7, now + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
 
-  osc.connect(gain);
-  gain.connect(ctx.destination);
-  osc.start(now);
-  osc.stop(now + 0.65);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.65);
+  } catch (error) {
+    console.error("Failed to play tone:", error);
+  }
 }
 
 function createKey(note, hue) {
@@ -122,13 +132,17 @@ document.addEventListener("keydown", (event) => {
   const noteName = keyboardMap[event.key.toLowerCase()];
   if (!noteName) return;
   event.preventDefault();
-  const button = keyButtons.get(noteName);
-  if (button) {
-    button.classList.add("active");
-  }
-  const note = notes.find((entry) => entry.name === noteName);
-  if (note) {
-    playTone(note.freq);
+  try {
+    const button = keyButtons.get(noteName);
+    if (button) {
+      button.classList.add("active");
+    }
+    const note = notes.find((entry) => entry.name === noteName);
+    if (note) {
+      playTone(note.freq);
+    }
+  } catch (error) {
+    console.error("Keyboard playback failed:", error);
   }
 });
 
