@@ -32,17 +32,34 @@ function highlightPad(color, duration) {
 
 function getAudioContext() {
   if (!audioContext) {
-    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-  }
-  if (audioContext.state === 'suspended') {
-    audioContext.resume();
+    try {
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    } catch (error) {
+      console.error('Failed to create AudioContext:', error);
+      return null;
+    }
   }
   return audioContext;
 }
 
-function playTone(frequency, durationMs) {
-  if (isMuted) return;
+async function resumeAudioContext() {
   const ctx = getAudioContext();
+  if (!ctx) return null;
+  if (ctx.state === 'suspended') {
+    try {
+      await ctx.resume();
+    } catch (error) {
+      console.error('Failed to resume AudioContext:', error);
+      return null;
+    }
+  }
+  return ctx;
+}
+
+async function playTone(frequency, durationMs) {
+  if (isMuted) return;
+  const ctx = await resumeAudioContext();
+  if (!ctx) return;
   const now = ctx.currentTime;
 
   const oscillator = ctx.createOscillator();
@@ -61,9 +78,10 @@ function playTone(frequency, durationMs) {
   oscillator.stop(now + durationMs / 1000 + 0.05);
 }
 
-function playErrorTone() {
+async function playErrorTone() {
   if (isMuted) return;
-  const ctx = getAudioContext();
+  const ctx = await resumeAudioContext();
+  if (!ctx) return;
   const now = ctx.currentTime;
   const oscillator = ctx.createOscillator();
   const gain = ctx.createGain();
@@ -96,7 +114,7 @@ function playSequence() {
     const delay = index * (duration + gap);
     const timer = setTimeout(() => {
       highlightPad(color, duration);
-      playTone(colorTone(color), Math.max(120, duration * 0.6));
+      void playTone(colorTone(color), Math.max(120, duration * 0.6)); // Fire-and-forget: avoid awaiting audio here.
     }, delay);
     playbackTimers.push(timer);
   });
@@ -119,13 +137,13 @@ function handlePadPress(color) {
   if (!acceptingInput) return;
 
   highlightPad(color, 300);
-  playTone(colorTone(color), 180);
+  void playTone(colorTone(color), 180);
 
   const result = SimonLogic.checkUserInput(sequence, userIndex, color);
   if (!result.correct) {
     acceptingInput = false;
     userIndex = result.nextIndex;
-    playErrorTone();
+    void playErrorTone();
     setMessage(`Incorrect. Press start to retry level ${level}.`);
     startButton.disabled = false;
     setTimeout(() => {
@@ -147,13 +165,13 @@ function handlePadPress(color) {
   }
 }
 
-startButton.addEventListener('click', () => {
+startButton.addEventListener('click', async () => {
   if (playbackTimers.length) {
     playbackTimers.forEach((timer) => clearTimeout(timer));
     playbackTimers = [];
   }
   if (!isMuted) {
-    getAudioContext();
+    await resumeAudioContext();
   }
   levelLabel.textContent = level;
   startRound();
