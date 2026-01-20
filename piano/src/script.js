@@ -64,8 +64,22 @@ function getAudioContext() {
   return audioCtx;
 }
 
-function playTone(freq) {
+async function resumeAudioContext() {
   const ctx = getAudioContext();
+  if (!ctx) return null;
+  if (ctx.state === "suspended") {
+    try {
+      await ctx.resume();
+    } catch (error) {
+      console.error("Failed to resume AudioContext:", error);
+      return null;
+    }
+  }
+  return ctx;
+}
+
+async function playTone(freq) {
+  const ctx = await resumeAudioContext();
   if (!ctx) return;
   try {
     const now = ctx.currentTime;
@@ -104,7 +118,7 @@ function createKey(note, hue) {
 
   const activate = () => {
     button.classList.add("active");
-    playTone(note.freq);
+    void playTone(note.freq);
   };
   const deactivate = () => button.classList.remove("active");
 
@@ -139,7 +153,7 @@ document.addEventListener("keydown", (event) => {
     }
     const note = notes.find((entry) => entry.name === noteName);
     if (note) {
-      playTone(note.freq);
+      void playTone(note.freq);
     }
   } catch (error) {
     console.error("Keyboard playback failed:", error);
