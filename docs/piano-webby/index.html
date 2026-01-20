@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -10,9 +10,11 @@
     <main>
       <h1>Rainbow Piano</h1>
       <p>Tap or click any key to play its note.</p>
+      <button class="start" id="start-audio" type="button">Play</button>
       <div class="keys-wrap">
         <div class="keys" id="keys" role="group" aria-label="Piano keys"></div>
       </div>
+      <div class="error" id="audio-error" role="alert" aria-live="polite"></div>
     </main>
     <script src="script.js"></script>
   </body>
