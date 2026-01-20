@@ -15,6 +15,16 @@ const targets = {
       { src: 'src/icons', dest: 'icons', suffix: '.svg' },
     ],
   },
+  'piano-webby': {
+    sourceRoot: 'piano',
+    outputRoot: 'docs/piano-webby',
+    files: [
+      { src: 'src/index.html', dest: 'index.html' },
+      { src: 'src/styles.css', dest: 'styles.css' },
+      { src: 'src/script.js', dest: 'script.js' },
+    ],
+    copyDirs: [],
+  },
 };
 
 async function ensureDir(dir) {
@@ -86,7 +96,13 @@ async function release(targetName, options) {
 async function main() {
   const args = process.argv.slice(2);
   const dryRun = args.includes('--dry-run');
+  const listOnly = args.includes('--list');
   const targetName = args.find((arg) => !arg.startsWith('-'));
+  if (listOnly) {
+    const names = Object.keys(targets).join(', ');
+    console.log(`Available targets: ${names}`);
+    return;
+  }
   if (!targetName) {
     const names = Object.keys(targets).join(', ');
     console.log(`Usage: node scripts/release.js <target> [--dry-run]`);
