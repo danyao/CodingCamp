@@ -104,12 +104,19 @@ p {
   font-family: "Courier New", Courier, monospace;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 900px) {
   .keys-wrap {
     padding: 14px;
   }
 
+  .keys {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 10px;
+  }
+
   .key {
-    height: 180px;
+    height: 150px;
+    width: auto;
   }
 }
