@@ -119,4 +119,8 @@ p {
     height: 150px;
     width: auto;
   }
+
+  .hotkey {
+    display: none;
+  }
 }
