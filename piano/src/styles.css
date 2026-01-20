@@ -38,6 +38,37 @@ p {
   font-size: clamp(1rem, 1.2vw + 0.6rem, 1.2rem);
 }
 
+.start {
+  border: 2px solid #1b1b1b;
+  background: #fff7e6;
+  color: #1b1b1b;
+  font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 10px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  margin: 0 0 18px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+}
+
+.start:focus-visible {
+  outline: 3px solid #1b1b1b;
+  outline-offset: 3px;
+}
+
+.start.is-ready {
+  opacity: 0.6;
+}
+
+.error {
+  min-height: 20px;
+  margin: 10px 0 0;
+  color: #8a2d2d;
+  font-size: 0.9rem;
+}
+
 .keys-wrap {
   background: rgba(255, 255, 255, 0.8);
   border-radius: 28px;

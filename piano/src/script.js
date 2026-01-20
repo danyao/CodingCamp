@@ -20,6 +20,8 @@ const hues = Array.from({ length: notes.length }, (_, index) =>
   Math.round((index * 360) / notes.length)
 );
 const keysEl = document.getElementById("keys");
+const startButton = document.getElementById("start-audio");
+const errorEl = document.getElementById("audio-error");
 const keyButtons = new Map();
 const keyboardMap = {
   q: "C4",
@@ -51,36 +53,44 @@ const noteToKey = Object.fromEntries(
   Object.entries(keyboardMap).map(([key, note]) => [note, key])
 );
 let audioCtx;
+let audioUnlocked = false;
 
-function getAudioContext() {
-  if (!audioCtx) {
-    try {
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    } catch (error) {
-      console.error("Failed to create AudioContext:", error);
-      return null;
-    }
+function showAudioError(message, error) {
+  if (error) {
+    console.error(message, error);
+  } else {
+    console.error(message);
+  }
+  if (!errorEl) return;
+  errorEl.textContent = message;
+}
+
+function initAudioContext() {
+  if (audioCtx) return audioCtx;
+  try {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  } catch (error) {
+    showAudioError("Failed to create AudioContext.", error);
+    return null;
   }
   return audioCtx;
 }
 
-async function resumeAudioContext() {
-  const ctx = getAudioContext();
-  if (!ctx) return null;
-  if (ctx.state === "suspended") {
-    try {
-      await ctx.resume();
-    } catch (error) {
-      console.error("Failed to resume AudioContext:", error);
-      return null;
-    }
+function playTone(freq) {
+  if (!audioUnlocked) {
+    showAudioError("Audio is disabled. Press Start to enable sound.");
+    return;
   }
-  return ctx;
-}
-
-async function playTone(freq) {
-  const ctx = await resumeAudioContext();
+  const ctx = audioCtx;
   if (!ctx) return;
+  if (ctx.state === "closed") {
+    showAudioError("AudioContext is closed. Reload to try again.");
+    return;
+  }
+  if (ctx.state !== "running") {
+    showAudioError("Audio is disabled. Press Start to enable sound.");
+    return;
+  }
   try {
     const now = ctx.currentTime;
     const osc = ctx.createOscillator();
@@ -97,7 +107,7 @@ async function playTone(freq) {
     osc.start(now);
     osc.stop(now + 0.65);
   } catch (error) {
-    console.error("Failed to play tone:", error);
+    showAudioError("Failed to play tone.", error);
   }
 }
 
@@ -118,7 +128,7 @@ function createKey(note, hue) {
 
   const activate = () => {
     button.classList.add("active");
-    void playTone(note.freq);
+    playTone(note.freq);
   };
   const deactivate = () => button.classList.remove("active");
 
@@ -141,6 +151,26 @@ notes.forEach((note, index) => {
   keysEl.appendChild(createKey(note, hues[index % hues.length]));
 });
 
+if (startButton) {
+  startButton.addEventListener("click", () => {
+    const ctx = initAudioContext();
+    if (!ctx) return;
+    ctx
+      .resume()
+      .then(() => {
+        audioUnlocked = true;
+        startButton.classList.add("is-ready");
+        startButton.textContent = "Sound On";
+        if (errorEl) {
+          errorEl.textContent = "";
+        }
+      })
+      .catch((error) => {
+        showAudioError("Failed to resume AudioContext.", error);
+      });
+  });
+}
+
 document.addEventListener("keydown", (event) => {
   if (event.repeat) return;
   const noteName = keyboardMap[event.key.toLowerCase()];
@@ -153,7 +183,7 @@ document.addEventListener("keydown", (event) => {
     }
     const note = notes.find((entry) => entry.name === noteName);
     if (note) {
-      void playTone(note.freq);
+      playTone(note.freq);
     }
   } catch (error) {
     console.error("Keyboard playback failed:", error);
