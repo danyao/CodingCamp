@@ -129,7 +129,7 @@ function playSequence() {
 }
 
 function startRound() {
-  sequence = SimonLogic.generateSequence(level, colors);
+  sequence = SimonLogic.advanceSequence(sequence, level, colors);
   playSequence();
 }
 
