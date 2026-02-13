@@ -185,6 +185,7 @@ startButton.addEventListener('click', async () => {
   }
   if (!isMuted) {
     await resumeAudioContext();
+    void playTone(colorTone('green'), 120);
   }
   levelLabel.textContent = level;
   if (sequence.length) {

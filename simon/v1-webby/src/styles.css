@@ -13,9 +13,11 @@ body {
   margin: 0;
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 24px;
+  gap: 16px;
 }
 
 .app {
@@ -113,7 +115,18 @@ h1 {
   gap: 12px;
 }
 
+.version {
+  margin-top: 8px;
+  text-align: center;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #1b1b1b;
+  opacity: 0.65;
+}
+
 .start,
+.sound,
 .mute {
   font-size: 1rem;
   padding: 10px 22px;
@@ -131,6 +144,11 @@ h1 {
 .start {
   background: #1b1b1b;
   color: #fff7ec;
+}
+
+.sound {
+  background: #fff7ec;
+  color: #1b1b1b;
 }
 
 .mute {

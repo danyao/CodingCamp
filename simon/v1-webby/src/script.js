@@ -1,5 +1,6 @@
 const pads = Array.from(document.querySelectorAll('.pad'));
 const startButton = document.querySelector('#start');
+const soundButton = document.querySelector('#sound');
 const muteButton = document.querySelector('#mute');
 const levelLabel = document.querySelector('#level');
 const message = document.querySelector('#message');
@@ -193,6 +194,17 @@ startButton.addEventListener('click', async () => {
   } else {
     startRound();
   }
+});
+
+soundButton.addEventListener('click', async () => {
+  if (isMuted) {
+    isMuted = false;
+    muteButton.classList.remove('is-muted');
+    muteButton.setAttribute('aria-pressed', 'false');
+    muteButton.setAttribute('aria-label', 'Mute audio');
+  }
+  await resumeAudioContext();
+  void playTone(colorTone('green'), 160);
 });
 
 pads.forEach((pad) => {
