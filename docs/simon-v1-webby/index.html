@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -20,15 +20,29 @@
       </header>
 
       <section class="board" aria-label="Simon board">
-        <button class="pad green" data-color="green" aria-label="Green"></button>
+        <button
+          class="pad green"
+          data-color="green"
+          aria-label="Green"
+        ></button>
         <button class="pad red" data-color="red" aria-label="Red"></button>
-        <button class="pad yellow" data-color="yellow" aria-label="Yellow"></button>
+        <button
+          class="pad yellow"
+          data-color="yellow"
+          aria-label="Yellow"
+        ></button>
         <button class="pad blue" data-color="blue" aria-label="Blue"></button>
       </section>
 
       <footer class="controls">
         <button id="start" class="start">Start</button>
-        <button id="mute" class="mute" aria-pressed="false" aria-label="Mute audio">
+        <button id="sound" class="sound">Turn on sound</button>
+        <button
+          id="mute"
+          class="mute"
+          aria-pressed="false"
+          aria-label="Mute audio"
+        >
           <span class="icon icon-unmuted" aria-hidden="true">
             <img src="icons/volume-on.svg" alt="" />
           </span>
@@ -38,6 +52,7 @@
         </button>
       </footer>
     </main>
+    <div class="version">Version 0.1.1</div>
 
     <script src="logic.js"></script>
     <script src="script.js"></script>
