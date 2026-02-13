@@ -14,6 +14,10 @@ let playbackTimers = [];
 let audioContext = null;
 let isMuted = false;
 
+function updateStartLabel() {
+  startButton.textContent = level > 1 ? 'Retry' : 'Start';
+}
+
 function durationForLevel(currentLevel) {
   const duration = 1000 - (currentLevel - 1) * 80;
   return Math.max(300, duration);
@@ -123,13 +127,14 @@ function playSequence() {
   const endTimer = setTimeout(() => {
     setMessage('Your turn.');
     acceptingInput = true;
+    startButton.disabled = false;
     playbackTimers = [];
   }, totalTime);
   playbackTimers.push(endTimer);
 }
 
 function startRound() {
-  sequence = SimonLogic.generateSequence(level, colors);
+  sequence = SimonLogic.advanceSequence(sequence, level, colors);
   playSequence();
 }
 
@@ -144,7 +149,8 @@ function handlePadPress(color) {
     acceptingInput = false;
     userIndex = result.nextIndex;
     void playErrorTone();
-    setMessage(`Incorrect. Press start to retry level ${level}.`);
+    const retryLabel = level > 1 ? 'retry' : 'start';
+    setMessage(`Incorrect. Press ${retryLabel} to replay level ${level}.`);
     startButton.disabled = false;
     setTimeout(() => {
       if (!acceptingInput) {
@@ -160,8 +166,15 @@ function handlePadPress(color) {
     acceptingInput = false;
     level += 1;
     levelLabel.textContent = level;
-    setMessage('Correct! Press start for the next level.');
-    startButton.disabled = false;
+    updateStartLabel();
+    setMessage('Correct! Next level starting...');
+    startButton.disabled = true;
+    setTimeout(() => {
+      if (!isMuted) {
+        void resumeAudioContext();
+      }
+      startRound();
+    }, 2000);
   }
 }
 
@@ -174,7 +187,11 @@ startButton.addEventListener('click', async () => {
     await resumeAudioContext();
   }
   levelLabel.textContent = level;
-  startRound();
+  if (sequence.length) {
+    playSequence();
+  } else {
+    startRound();
+  }
 });
 
 pads.forEach((pad) => {
@@ -202,3 +219,5 @@ function colorTone(color) {
       return 440;
   }
 }
+
+updateStartLabel();

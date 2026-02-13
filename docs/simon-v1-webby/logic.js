@@ -13,6 +13,22 @@
     });
   }
 
+  function advanceSequence(existing, level, colors = DEFAULT_COLORS, rng = Math.random) {
+    const targetLength = sequenceLengthForLevel(level);
+    let next = Array.isArray(existing) ? existing.slice() : [];
+
+    if (next.length === 0) {
+      return generateSequence(level, colors, rng);
+    }
+
+    while (next.length < targetLength) {
+      const pick = Math.floor(rng() * colors.length);
+      next.push(colors[pick]);
+    }
+
+    return next;
+  }
+
   function checkUserInput(sequence, index, color) {
     if (!Array.isArray(sequence) || sequence.length === 0) {
       return { correct: false, nextIndex: index, isComplete: false };
@@ -30,6 +46,7 @@
   const api = {
     sequenceLengthForLevel,
     generateSequence,
+    advanceSequence,
     checkUserInput,
   };
 
